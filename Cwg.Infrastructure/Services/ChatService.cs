@@ -5,16 +5,19 @@ namespace Cwg.Infrastructure.Services;
 
 public class ChatService : IChatService
 {
-    private readonly ChatClient _chat;
+    private ChatClient? _chat;
 
-    public ChatService()
+    public void Initialize(string apiKey, string model = "gpt-4o")
     {
-        _chat = new ChatClient(model: "gpt-4o", Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? "");
+        _chat = new ChatClient(model, apiKey);
     }
 
-    public string Send(string msg)
+    public async Task<string> SendAsync(string msg)
     {
-        ChatCompletion completion = _chat.CompleteChat(msg);
+        if (_chat == null)
+            throw new InvalidOperationException();
+        
+        ChatCompletion completion = await _chat.CompleteChatAsync(msg);
 
         return completion.ToString();
     }

@@ -2,5 +2,6 @@ namespace Cwg.Core.Services;
 
 public interface IChatService
 {
-    string Send(string msg);
+    void Initialize(string apiKey, string model = "gpt-4o");
+    Task<string> SendAsync(string msg);
 }
