@@ -1,7 +1,40 @@
 ﻿@page "/"
+@using Cwg.Core.Services
+
+@inject IChatService Chat
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<input @bind="apiKey" />
+
+<button type="button" @onclick="SetKey">Set key</button>
+
+<textarea @bind="msg"></textarea>
+
+<button type="button" @onclick="OnSend">Send</button>
+
+Response:
+<p>@response</p>
+
+@code{
+
+    string apiKey = "";
+    string msg = "";
+    string response = "";
+
+    async Task OnSend()
+    {
+        response = await Chat.SendAsync(msg);
+        
+        StateHasChanged();
+    }
+
+    void SetKey()
+    {
+        Chat.Initialize(apiKey);
+    }
+}
