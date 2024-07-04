@@ -1,0 +1,15 @@
+@page "/Settings"
+@using Cwg.Core.Dto
+<h3>Settings</h3>
+
+Api key:<br>
+<input @bind="_settingsDto.ApiKey"><br>
+
+System message:<br>
+<textarea @bind="_settingsDto.SystemMessage"></textarea><br>
+
+<button type="button">Save</button>
+
+@code {
+    private SettingsDto _settingsDto = new SettingsDto();
+}
