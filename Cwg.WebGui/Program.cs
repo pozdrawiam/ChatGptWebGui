@@ -7,6 +7,7 @@ using Cwg.WebGui;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddTransient<IChatService, ChatService>();
+builder.Services.AddTransient<ISettingsService, SettingsService>();
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
