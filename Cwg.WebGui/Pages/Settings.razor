@@ -1,5 +1,10 @@
 @page "/Settings"
+
 @using Cwg.Core.Dto
+@using Cwg.Core.Services
+
+@inject ISettingsService SettingsService
+
 <h3>Settings</h3>
 
 Api key:<br>
@@ -8,8 +13,20 @@ Api key:<br>
 System message:<br>
 <textarea @bind="_settingsDto.SystemMessage"></textarea><br>
 
-<button type="button">Save</button>
+<button type="button" @onclick="OnSave">Save</button>
 
 @code {
     private SettingsDto _settingsDto = new SettingsDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _settingsDto = await SettingsService.GetAsync();
+        
+        StateHasChanged();
+    }
+
+    async Task OnSave()
+    {
+        await SettingsService.SaveAsync(_settingsDto);
+    }
 }

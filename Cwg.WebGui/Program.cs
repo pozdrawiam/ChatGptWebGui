@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Cwg.Core.Services;
 using Cwg.Infrastructure.Services;
 using Microsoft.AspNetCore.Components.Web;
@@ -8,6 +9,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddTransient<IChatService, ChatService>();
 builder.Services.AddTransient<ISettingsService, SettingsService>();
+
+builder.Services.AddBlazoredLocalStorage();
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
