@@ -4,6 +4,6 @@ namespace Cwg.Core.Services;
 
 public interface IChatDbService
 {
-    IEnumerable<ChatInfo> GetChats();
-    ChatSessionDto GetChatSession(Guid id);
+    Task<IEnumerable<ChatInfo>> GetChatsAsync();
+    Task<ChatSessionDto> GetChatSessionAsync(Guid id);
 }
