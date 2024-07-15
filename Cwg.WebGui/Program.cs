@@ -9,6 +9,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddTransient<IChatService, ChatService>();
 builder.Services.AddTransient<ISettingsService, SettingsService>();
+builder.Services.AddTransient<IChatDbService, ChatDbService>();
 
 builder.Services.AddBlazoredLocalStorage();
 
