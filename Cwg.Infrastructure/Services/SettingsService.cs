@@ -4,13 +4,13 @@ using Cwg.Core.Services;
 
 namespace Cwg.Infrastructure.Services;
 
-public class SettingsService(ILocalStorageService storageService)  : ISettingsService
+public class SettingsService(ILocalStorageService storageService) : ISettingsService
 {
     private const string SettingsKey = "Settings";
-    
+
     public async Task<SettingsDto> GetAsync()
     {
-        var settingsDto = await storageService.GetItemAsync<SettingsDto>(SettingsKey) ?? 
+        var settingsDto = await storageService.GetItemAsync<SettingsDto>(SettingsKey) ??
                           new SettingsDto();
 
         return settingsDto;
