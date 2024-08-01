@@ -42,4 +42,18 @@ public class ChatDbService(ILocalStorageService storageService) : IChatDbService
 
         await storageService.SetItemAsync(ChatsKey, chats);
     }
+
+    public async Task UpdateChatAsync(ChatInfo chatInfo)
+    {
+        List<ChatInfo> chats = (await GetChatsAsync()).ToList();
+
+        var chatToUpdate = chats.FirstOrDefault(x => x.Id == chatInfo.Id);
+
+        if (chatToUpdate == null)
+            return;
+
+        chatToUpdate.Title = chatInfo.Title;
+
+        await storageService.SetItemAsync(ChatsKey, chats);
+    }
 }

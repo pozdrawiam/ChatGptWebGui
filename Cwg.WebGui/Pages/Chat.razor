@@ -12,8 +12,18 @@
     @foreach (ChatInfo chat in _chats)
     {
         <li>
-            @chat.Title
-            <button type="button" @onclick="async () => await OnDeleteChatClick(chat)">Delete</button>
+            @if (chat == _editingChat)
+            {
+                <input type="text" @bind="chat.Title" />
+                <button type="button" @onclick="async () => await OnSaveChatTitleClick(chat)">Save</button>
+                <button type="button" @onclick="() => OnCancelEditClick(chat)">Cancel</button>
+            }
+            else
+            {
+                @chat.Title
+                <button type="button" @onclick="() => OnEditChatClick(chat)">Edit</button>
+                <button type="button" @onclick="async () => await OnDeleteChatClick(chat)">Delete</button>
+            }
         </li>
     }
 </ul>
@@ -22,6 +32,8 @@
 
 @code {
     List<ChatInfo> _chats = [];
+
+    ChatInfo? _editingChat = null;
     
     protected override async Task OnInitializedAsync()
     {
@@ -42,6 +54,22 @@
         await ChatDb.DeleteChatAsync(chat.Id);
 
         _chats.Remove(chat);
+    }
+    
+    private void OnEditChatClick(ChatInfo chat)
+    {
+        _editingChat = chat;
+    }
+    
+    private void OnCancelEditClick(ChatInfo chat)
+    {
+        _editingChat = null;
+    }
+
+    private async Task OnSaveChatTitleClick(ChatInfo chat)
+    {
+        _editingChat = null;
+        await ChatDb.UpdateChatAsync(chat);
     }
 
 }

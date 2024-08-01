@@ -8,4 +8,5 @@ public interface IChatDbService
     Task<ChatSessionDto> GetChatSessionAsync(Guid id);
     Task AddChatAsync(ChatInfo chatInfo);
     Task DeleteChatAsync(Guid chatId);
+    Task UpdateChatAsync(ChatInfo chatInfo);
 }
