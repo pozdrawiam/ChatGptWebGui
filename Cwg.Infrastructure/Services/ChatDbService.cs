@@ -19,4 +19,13 @@ public class ChatDbService(ILocalStorageService storageService) : IChatDbService
     {
         throw new NotImplementedException();
     }
+
+    public async Task AddChat(ChatInfo chatInfo)
+    {
+        List<ChatInfo> chats = (await GetChatsAsync()).ToList();
+        
+        chats.Add(chatInfo);
+
+        await storageService.SetItemAsync(ChatsKey, chats);
+    }
 }
