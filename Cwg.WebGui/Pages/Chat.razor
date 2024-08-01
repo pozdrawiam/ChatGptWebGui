@@ -1,0 +1,38 @@
+@page "/Chat"
+@using Cwg.Core.Dto
+@using Cwg.Core.Services
+
+@inject IChatDbService ChatDb
+
+<PageTitle>Chat</PageTitle>
+
+<h3>Chats</h3>
+
+<ul>
+    @foreach (ChatInfo chat in _chats)
+    {
+        <li>
+            @chat.Title
+        </li>
+    }
+</ul>
+
+<button type="button" @onclick="OnNewChatClick">New chat</button>
+
+@code {
+    List<ChatInfo> _chats = [];
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _chats = (await ChatDb.GetChatsAsync()).ToList();
+    }
+
+    private async Task OnNewChatClick()
+    {
+        var newChat = new ChatInfo();
+        
+        await ChatDb.AddChat(newChat);
+        
+        _chats.Add(newChat);
+    }
+}
