@@ -13,6 +13,7 @@
     {
         <li>
             @chat.Title
+            <button type="button" @onclick="async () => await OnDeleteChatClick(chat)">Delete</button>
         </li>
     }
 </ul>
@@ -35,4 +36,12 @@
         
         _chats.Add(newChat);
     }
+
+    private async Task OnDeleteChatClick(ChatInfo chat)
+    {
+        await ChatDb.DeleteChatAsync(chat.Id);
+
+        _chats.Remove(chat);
+    }
+
 }

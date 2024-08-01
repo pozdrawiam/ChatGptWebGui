@@ -28,4 +28,18 @@ public class ChatDbService(ILocalStorageService storageService) : IChatDbService
 
         await storageService.SetItemAsync(ChatsKey, chats);
     }
+
+    public async Task DeleteChatAsync(Guid chatId)
+    {
+        List<ChatInfo> chats = (await GetChatsAsync()).ToList();
+
+        var chatToDelete = chats.FirstOrDefault(x => x.Id == chatId);
+
+        if (chatToDelete == null)
+            return;
+
+        chats.Remove(chatToDelete);
+
+        await storageService.SetItemAsync(ChatsKey, chats);
+    }
 }
