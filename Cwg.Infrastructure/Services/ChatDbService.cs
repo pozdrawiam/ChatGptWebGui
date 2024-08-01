@@ -20,7 +20,7 @@ public class ChatDbService(ILocalStorageService storageService) : IChatDbService
         throw new NotImplementedException();
     }
 
-    public async Task AddChat(ChatInfo chatInfo)
+    public async Task AddChatAsync(ChatInfo chatInfo)
     {
         List<ChatInfo> chats = (await GetChatsAsync()).ToList();
         

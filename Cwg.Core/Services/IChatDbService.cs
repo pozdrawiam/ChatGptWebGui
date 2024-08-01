@@ -6,5 +6,5 @@ public interface IChatDbService
 {
     Task<IEnumerable<ChatInfo>> GetChatsAsync();
     Task<ChatSessionDto> GetChatSessionAsync(Guid id);
-    Task AddChat(ChatInfo chatInfo);
+    Task AddChatAsync(ChatInfo chatInfo);
 }

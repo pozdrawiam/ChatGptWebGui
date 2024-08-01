@@ -31,7 +31,7 @@
     {
         var newChat = new ChatInfo();
         
-        await ChatDb.AddChat(newChat);
+        await ChatDb.AddChatAsync(newChat);
         
         _chats.Add(newChat);
     }
