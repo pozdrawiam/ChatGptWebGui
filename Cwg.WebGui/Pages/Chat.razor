@@ -22,6 +22,7 @@
             else
             {
                 @chat.Title
+                <button type="button" @onclick="() => OnSelectChatClick(chat)">Select</button>
                 <button type="button" @onclick="() => OnEditChatClick(chat)">Edit</button>
                 <button type="button" @onclick="async () => await OnDeleteChatClickAsync(chat)">Delete</button>
             }
@@ -31,9 +32,21 @@
 
 <button type="button" @onclick="async () => await OnNewChatClickAsync()">New chat</button>
 
+<h3>Current chat</h3>
+
+@if (_currentChat != null)
+{
+    <p>Current chat: @_currentChat.Title</p>
+}
+else
+{
+    <p>Select or create chat.</p>
+}
+
 @code {
     List<ChatInfo> _chats = [];
 
+    ChatInfo? _currentChat;
     ChatInfo? _editingChat;
 
     protected override async Task OnInitializedAsync()
@@ -54,6 +67,9 @@
     {
         await ChatDb.DeleteChatAsync(chat.Id);
 
+        if (chat == _currentChat)
+            _currentChat = null;
+
         _chats.Remove(chat);
     }
 
@@ -71,6 +87,11 @@
     {
         _editingChat = null;
         await ChatDb.UpdateChatAsync(chat);
+    }
+
+    private void OnSelectChatClick(ChatInfo chat)
+    {
+        _currentChat = chat;
     }
 
 }
