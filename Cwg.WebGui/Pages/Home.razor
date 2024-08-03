@@ -1,4 +1,5 @@
 ﻿@page "/"
+
 @using Cwg.Core.Services
 
 @inject IChatService Chat
@@ -6,28 +7,29 @@
 
 <PageTitle>Home</PageTitle>
 
-<textarea @bind="msg"></textarea><br>
+<textarea @bind="_msg"></textarea><br>
 <button type="button" @onclick="OnSend">Send</button><br>
 
 Response:<br>
-<p>@response</p>
+<p>@_response</p>
 
 @code{
-    string msg = "";
-    string response = "";
+    string _msg = "";
+    string _response = "";
 
     protected override async Task OnInitializedAsync()
     {
         string apiKey = (await Settings.GetAsync()).ApiKey;
-        
+
         if (!string.IsNullOrEmpty(apiKey))
             Chat.Initialize(apiKey);
     }
 
     async Task OnSend()
     {
-        response = await Chat.SendAsync(msg);
-        
+        _response = await Chat.SendAsync(_msg);
+
         StateHasChanged();
     }
+
 }
