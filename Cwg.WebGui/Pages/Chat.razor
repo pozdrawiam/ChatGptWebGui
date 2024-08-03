@@ -16,20 +16,20 @@
             @if (chat == _editingChat)
             {
                 <input type="text" @bind="chat.Title"/>
-                <button type="button" @onclick="async () => await OnSaveChatTitleClick(chat)">Save</button>
-                <button type="button" @onclick="() => OnCancelEditClick(chat)">Cancel</button>
+                <button type="button" @onclick="async () => await OnSaveChatTitleClickAsync(chat)">Save</button>
+                <button type="button" @onclick="OnCancelEditClick">Cancel</button>
             }
             else
             {
                 @chat.Title
                 <button type="button" @onclick="() => OnEditChatClick(chat)">Edit</button>
-                <button type="button" @onclick="async () => await OnDeleteChatClick(chat)">Delete</button>
+                <button type="button" @onclick="async () => await OnDeleteChatClickAsync(chat)">Delete</button>
             }
         </li>
     }
 </ul>
 
-<button type="button" @onclick="OnNewChatClick">New chat</button>
+<button type="button" @onclick="async () => await OnNewChatClickAsync()">New chat</button>
 
 @code {
     List<ChatInfo> _chats = [];
@@ -41,7 +41,7 @@
         _chats = (await ChatDb.GetChatsAsync()).ToList();
     }
 
-    private async Task OnNewChatClick()
+    private async Task OnNewChatClickAsync()
     {
         var newChat = new ChatInfo();
 
@@ -50,7 +50,7 @@
         _chats.Add(newChat);
     }
 
-    private async Task OnDeleteChatClick(ChatInfo chat)
+    private async Task OnDeleteChatClickAsync(ChatInfo chat)
     {
         await ChatDb.DeleteChatAsync(chat.Id);
 
@@ -62,12 +62,12 @@
         _editingChat = chat;
     }
 
-    private void OnCancelEditClick(ChatInfo chat)
+    private void OnCancelEditClick()
     {
         _editingChat = null;
     }
 
-    private async Task OnSaveChatTitleClick(ChatInfo chat)
+    private async Task OnSaveChatTitleClickAsync(ChatInfo chat)
     {
         _editingChat = null;
         await ChatDb.UpdateChatAsync(chat);
