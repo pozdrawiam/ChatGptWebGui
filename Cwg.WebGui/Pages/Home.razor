@@ -20,7 +20,8 @@ Response:<br>
     {
         string apiKey = (await Settings.GetAsync()).ApiKey;
         
-        Chat.Initialize(apiKey);
+        if (!string.IsNullOrEmpty(apiKey))
+            Chat.Initialize(apiKey);
     }
 
     async Task OnSend()
