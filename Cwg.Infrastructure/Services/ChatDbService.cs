@@ -7,6 +7,7 @@ namespace Cwg.Infrastructure.Services;
 public class ChatDbService(ILocalStorageService storageService) : IChatDbService
 {
     private const string ChatsKey = "Chats";
+    private const string ChatSessionKeyPrefix = "ChatSession_";
     
     public async Task<IEnumerable<ChatInfo>> GetChatsAsync()
     {
@@ -15,9 +16,11 @@ public class ChatDbService(ILocalStorageService storageService) : IChatDbService
         return chats ?? ArraySegment<ChatInfo>.Empty;
     }
 
-    public Task<ChatSessionDto> GetChatSessionAsync(Guid id)
+    public async Task<ChatSessionDto> GetChatSessionAsync(Guid id)
     {
-        throw new NotImplementedException();
+        ChatSessionDto? chatSession = await storageService.GetItemAsync<ChatSessionDto>($"{ChatSessionKeyPrefix}{id}");
+
+        return chatSession ?? new();
     }
 
     public async Task AddChatAsync(ChatInfo chatInfo)
