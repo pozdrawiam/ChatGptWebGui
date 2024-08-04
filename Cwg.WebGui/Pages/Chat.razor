@@ -22,7 +22,7 @@
             else
             {
                 @chat.Title
-                <button type="button" @onclick="() => OnSelectChatClick(chat)">Select</button>
+                <button type="button" @onclick="async () => await OnSelectChatClickAsync(chat)">Select</button>
                 <button type="button" @onclick="() => OnEditChatClick(chat)">Edit</button>
                 <button type="button" @onclick="async () => await OnDeleteChatClickAsync(chat)">Delete</button>
             }
@@ -34,9 +34,27 @@
 
 <h3>Current chat</h3>
 
-@if (_currentChat != null)
+@if (_currentChat != null && _chatSession != null)
 {
     <p>Current chat: @_currentChat.Title</p>
+
+    <ul>
+        @foreach (var msg in _chatSession.Messages)
+        {
+            <li>
+                @if (msg.Type == ChatMessageType.Assistant)
+                {
+                    <text>Assistant</text>
+                }
+                else
+                {
+                    <text>User</text>
+                }
+                : 
+                <p>@msg</p>
+            </li>
+        }
+    </ul>
 }
 else
 {
@@ -45,6 +63,7 @@ else
 
 @code {
     List<ChatInfo> _chats = [];
+    ChatSessionDto? _chatSession;
 
     ChatInfo? _currentChat;
     ChatInfo? _editingChat;
@@ -89,9 +108,10 @@ else
         await ChatDb.UpdateChatAsync(chat);
     }
 
-    private void OnSelectChatClick(ChatInfo chat)
+    private async Task OnSelectChatClickAsync(ChatInfo chat)
     {
         _currentChat = chat;
+        _chatSession = await ChatDb.GetChatSessionAsync(chat.Id);
     }
 
 }
