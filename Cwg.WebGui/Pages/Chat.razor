@@ -93,6 +93,8 @@ else
         await ChatDb.AddChatAsync(newChat);
 
         _chats.Add(newChat);
+
+        _chatSession = new ChatSessionDto();
     }
 
     private async Task OnDeleteChatClickAsync(ChatInfo chat)
@@ -143,6 +145,9 @@ else
         await ChatService.CompleteChatAsync(_chatSession);
         
         StateHasChanged();
+
+        if (_currentChat != null)
+            await ChatDb.UpdateChatSessionAsync(_currentChat.Id, _chatSession);
     }
 
 }

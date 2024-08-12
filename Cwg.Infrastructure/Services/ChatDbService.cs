@@ -23,6 +23,11 @@ public class ChatDbService(ILocalStorageService storageService) : IChatDbService
         return chatSession ?? new();
     }
 
+    public async Task UpdateChatSessionAsync(Guid id, ChatSessionDto chatSession)
+    {
+        await storageService.SetItemAsync($"{ChatSessionKeyPrefix}{id}", chatSession);
+    }
+
     public async Task AddChatAsync(ChatInfo chatInfo)
     {
         List<ChatInfo> chats = (await GetChatsAsync()).ToList();
