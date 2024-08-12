@@ -3,7 +3,9 @@
 @using Cwg.Core.Dto
 @using Cwg.Core.Services
 
+@inject IChatService ChatService
 @inject IChatDbService ChatDb
+@inject ISettingsService Settings
 
 <PageTitle>Chat</PageTitle>
 
@@ -50,11 +52,15 @@
                 {
                     <text>User</text>
                 }
-                : 
-                <p>@msg</p>
+                :
+                <p>@msg.Message</p>
             </li>
         }
     </ul>
+
+    <textarea @bind="_message"></textarea>
+    <br>
+    <button type="button" @onclick="async () => await OnSendAsync()">Send</button>
 }
 else
 {
@@ -68,8 +74,15 @@ else
     ChatInfo? _currentChat;
     ChatInfo? _editingChat;
 
+    string _message = "";
+
     protected override async Task OnInitializedAsync()
     {
+        string apiKey = (await Settings.GetAsync()).ApiKey;
+
+        if (!string.IsNullOrEmpty(apiKey))
+            ChatService.Initialize(apiKey);
+        
         _chats = (await ChatDb.GetChatsAsync()).ToList();
     }
 
@@ -112,6 +125,24 @@ else
     {
         _currentChat = chat;
         _chatSession = await ChatDb.GetChatSessionAsync(chat.Id);
+    }
+
+    private async Task OnSendAsync()
+    {
+        if (_chatSession == null)
+            return;
+        
+        _chatSession.Messages.Add(new ChatMessageDto
+        {
+            Message = _message,
+            Type = ChatMessageType.User
+        });
+
+        _message = "";
+        
+        await ChatService.CompleteChatAsync(_chatSession);
+        
+        StateHasChanged();
     }
 
 }
