@@ -11,16 +11,18 @@ public class ChatService : IChatService
     public async Task CompleteChatAsync(ChatSessionDto chatSession)
     {
         IEnumerable<ChatMessage> messages = chatSession.Messages.Select(x =>
-            x.Type == ChatMessageType.Assistant ? new AssistantChatMessage(x.Message) as ChatMessage : new UserChatMessage(x.Message)
+            x.Type == ChatMessageType.Assistant ? new AssistantChatMessage(x.Message) as ChatMessage :
+            x.Type == ChatMessageType.System ? new SystemChatMessage(x.Message) :
+            new UserChatMessage(x.Message)
         );
 
         if (_chat == null)
             throw new InvalidOperationException();
-        
+
         ChatCompletion completion = await _chat.CompleteChatAsync(messages);
 
         string? message = completion.ToString();
-        
+
         chatSession.Messages.Add(new ChatMessageDto
         {
             Message = message,
@@ -37,7 +39,7 @@ public class ChatService : IChatService
     {
         if (_chat == null)
             throw new InvalidOperationException();
-        
+
         ChatCompletion completion = await _chat.CompleteChatAsync(msg);
 
         return completion.ToString();
