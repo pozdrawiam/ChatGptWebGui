@@ -47,8 +47,9 @@ public class ChatDbService(ILocalStorageService storageService) : IChatDbService
             return;
 
         chats.Remove(chatToDelete);
-
+        
         await storageService.SetItemAsync(ChatsKey, chats);
+        await storageService.RemoveItemAsync($"{ChatSessionKeyPrefix}{chatId}");
     }
 
     public async Task UpdateChatAsync(ChatInfo chatInfo)
