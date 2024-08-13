@@ -3,6 +3,7 @@
 @using Cwg.Core.Dto
 @using Cwg.Core.Services
 
+@inject NavigationManager Nav
 @inject ISettingsService SettingsService
 
 <h3>Settings</h3>
@@ -13,20 +14,23 @@ Api key:<br>
 System message:<br>
 <textarea @bind="_settingsDto.SystemMessage"></textarea><br>
 
-<button type="button" @onclick="OnSave">Save</button>
+<button type="button" @onclick="async () => await OnSaveAsync()">Save</button>
 
 @code {
-    private SettingsDto _settingsDto = new SettingsDto();
+    private SettingsDto _settingsDto = new();
 
     protected override async Task OnInitializedAsync()
     {
         _settingsDto = await SettingsService.GetAsync();
-        
+
         StateHasChanged();
     }
 
-    async Task OnSave()
+    private async Task OnSaveAsync()
     {
         await SettingsService.SaveAsync(_settingsDto);
+
+        Nav.NavigateTo("/Chat");
     }
+
 }
