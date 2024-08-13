@@ -56,6 +56,14 @@
                 <p>@msg.Message</p>
             </li>
         }
+        
+        @if (_loading)
+        {
+            <text>Assistant:</text>
+            <li>
+                <p>Loading...</p>
+            </li>
+        }
     </ul>
 
     <textarea @bind="_message"></textarea>
@@ -74,6 +82,8 @@ else
     ChatInfo? _currentChat;
     ChatInfo? _editingChat;
 
+    bool _loading;
+    
     string _message = "";
 
     SettingsDto _settings = new();
@@ -140,8 +150,10 @@ else
 
     private async Task OnSendAsync()
     {
-        if (_chatSession == null)
+        if (_loading || _chatSession == null)
             return;
+
+        _loading = true;
         
         _chatSession.Messages.Add(new ChatMessageDto
         {
@@ -150,13 +162,18 @@ else
         });
 
         _message = "";
-        
-        await ChatService.CompleteChatAsync(_chatSession);
-        
-        StateHasChanged();
 
-        if (_currentChat != null)
-            await ChatDb.UpdateChatSessionAsync(_currentChat.Id, _chatSession);
+        try
+        {
+            await ChatService.CompleteChatAsync(_chatSession);
+
+            if (_currentChat != null)
+                await ChatDb.UpdateChatSessionAsync(_currentChat.Id, _chatSession);
+        }
+        finally
+        {
+            _loading = false;
+        }
     }
 
 }
