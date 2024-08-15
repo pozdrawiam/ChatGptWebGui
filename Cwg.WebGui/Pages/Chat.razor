@@ -68,7 +68,7 @@
         }
     </ul>
 
-    <textarea @bind="_message"></textarea>
+    <textarea @bind="_chatMessage"></textarea>
     <br>
     <button type="button" @onclick="async () => await OnSendAsync()">Send</button>
 }
@@ -77,24 +77,23 @@ else
     <p>Select or create chat.</p>
 }
 
-@if (!string.IsNullOrEmpty(_error))
+@if (!string.IsNullOrEmpty(_errorMessage))
 {
-    <p>Error: @_error</p>
+    <p>Error: @_errorMessage</p>
 }
 
 @code {
+    SettingsDto _settings = new();
+    
     List<ChatInfo> _chats = [];
-    ChatSessionDto? _chatSession;
-
     ChatInfo? _currentChat;
     ChatInfo? _editingChat;
-
+    
+    ChatSessionDto? _chatSession;
+    string _chatMessage = "";
+    
     bool _loading;
-
-    string _error = "";
-    string _message = "";
-
-    SettingsDto _settings = new();
+    string _errorMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -126,7 +125,7 @@ else
 
     private async Task OnDeleteChatClickAsync(ChatInfo chat)
     {
-        _error = "";
+        _errorMessage = "";
         
         await ChatDb.DeleteChatAsync(chat.Id);
 
@@ -154,21 +153,21 @@ else
 
     private async Task OnSelectChatClickAsync(ChatInfo chat)
     {
-        _error = "";
+        _errorMessage = "";
         _currentChat = chat;
         _chatSession = await ChatDb.GetChatSessionAsync(chat.Id);
     }
 
     private async Task OnSendAsync()
     {
-        _error = "";
+        _errorMessage = "";
         
         if (_loading || _chatSession == null)
             return;
 
         if (string.IsNullOrEmpty(_settings.ApiKey))
         {
-            _error = "Api key not set.";
+            _errorMessage = "Api key not set.";
             return;
         }
 
@@ -176,11 +175,11 @@ else
         
         _chatSession.Messages.Add(new ChatMessageDto
         {
-            Message = _message,
+            Message = _chatMessage,
             Type = ChatMessageType.User
         });
 
-        _message = "";
+        _chatMessage = "";
 
         try
         {
@@ -191,7 +190,7 @@ else
         }
         catch (Exception ex)
         {
-            _error = "Exception during chat request: " + ex.Message;
+            _errorMessage = "Exception during chat request: " + ex.Message;
         }
         finally
         {
