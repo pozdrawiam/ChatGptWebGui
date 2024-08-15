@@ -77,6 +77,11 @@ else
     <p>Select or create chat.</p>
 }
 
+@if (!string.IsNullOrEmpty(_error))
+{
+    <p>Error: @_error</p>
+}
+
 @code {
     List<ChatInfo> _chats = [];
     ChatSessionDto? _chatSession;
@@ -85,7 +90,8 @@ else
     ChatInfo? _editingChat;
 
     bool _loading;
-    
+
+    string _error = "";
     string _message = "";
 
     SettingsDto _settings = new();
@@ -120,6 +126,8 @@ else
 
     private async Task OnDeleteChatClickAsync(ChatInfo chat)
     {
+        _error = "";
+        
         await ChatDb.DeleteChatAsync(chat.Id);
 
         if (chat == _currentChat)
@@ -146,14 +154,23 @@ else
 
     private async Task OnSelectChatClickAsync(ChatInfo chat)
     {
+        _error = "";
         _currentChat = chat;
         _chatSession = await ChatDb.GetChatSessionAsync(chat.Id);
     }
 
     private async Task OnSendAsync()
     {
+        _error = "";
+        
         if (_loading || _chatSession == null)
             return;
+
+        if (string.IsNullOrEmpty(_settings.ApiKey))
+        {
+            _error = "Api key not set.";
+            return;
+        }
 
         _loading = true;
         
@@ -171,6 +188,10 @@ else
 
             if (_currentChat != null)
                 await ChatDb.UpdateChatSessionAsync(_currentChat.Id, _chatSession);
+        }
+        catch (Exception ex)
+        {
+            _error = "Exception during chat request: " + ex.Message;
         }
         finally
         {
