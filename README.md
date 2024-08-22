@@ -38,3 +38,4 @@ Before chat set api key in settings page.
 - dark mode
 - cancelation
 - data by stream
+- tests
